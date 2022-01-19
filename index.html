@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Проверка пароля Rust на слив 2022</title>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            outline: 0;
+            overflow-x: hidden;
+            box-sizing: border-box;
+            font-family: Roboto, Nunito, Tahoma, Arial, sans-serif;
+            font-size: 14px;
+        }
+        #pincode{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        header{
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: center;
+            justify-content: space-around;
+        }
+        figcaption{
+            text-align: center;
+        }
+        #pass{
+            width: 70%;
+            background: #f2f2f2;
+            border: 0;
+            border-radius: 0;
+            outline: 0;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px #000 solid;
+            margin: 20px 0 20px 0;
+        }
+        #pass::placeholder{
+            font-size: 14px;
+            color: #000;
+            transition: all .2s ease;
+        }
+        #pass:focus::placeholder{
+            font-size: 10px;
+            color: #828282;
+        }
+        #pass:focus{
+            outline: 0;
+        }
+        #btn {
+            border: 0;
+            background: #78BF45;
+            color: #fff;
+            font-weight: 500;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 15px;
+            text-align: center;
+            margin: 50px 0 100px 0;
+            box-shadow: 0 0 2px #78BF45, 0 0 8px #78BF45, 0 0 16px #78BF45;
+            transition: box-shadow, 0.3s ease-in-out;
+        }
+        #btn:hover{
+            box-shadow: 0 0 10px #78BF45, 0 0 40px #78BF45, 0 0 80px #78BF45;
+        }
+        body{
+            width: 70%;
+            margin: 0 auto;
+            background: #f2f2f2;
+        }
+        .flex{
+            display: flex;
+        }
+        .flex-col{
+            flex-direction: column;
+        }
+        nav a{
+            color: #78BF45;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px;
+            font-size: 16px;
+        }
+        nav a:active{
+            color: #828282;
+        }
+        nav a::after{
+            content: " →";
+            transition: color 0.3s ease-in-out;
+        }
+        nav a:hover::after{
+            color: #ffd700;
+            transition: color 0.3s ease-in-out;
+        }
+        h1{
+            font-size: 36px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        h1::before{
+            content: "\2691";
+            margin-right: 15px;
+        }
+        #donate{
+            border: 0;
+            background: #ffd700;
+            color: #191919;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 15px;
+            text-align: center;
+            margin: 50px;
+            box-shadow: 0 0 2px #ffd700, 0 0 8px #ffd700, 0 0 16px #ffd700;
+            transition: box-shadow, 0.3s ease-in-out;
+        }
+        #donate:hover{
+            box-shadow: 0 0 10px #ffd700, 0 0 25px #ffd700, 0 0 40px #ffd700;
+        }
+        body::selection{
+            background-color: #78BF45;
+            color: #191919;
+        }
+        section:last-child{
+            margin-bottom: 150px;
+        }
+        footer{
+            background-color: #191919;
+            height: 100px;
+            bottom: 0;
+        }
+        .pincode-part{
+            border-radius: 0;
+            background: none;
+            outline: 0;
+            width: 72px;
+            height: 75px;
+            margin: 15px;
+            padding: 15px;
+            text-align: center;
+            border: 0;
+            border-bottom: 2px black solid;
+            transition: box-shadow, 0.3s ease-in-out;
+            font-size: 72px;
+        }
+        .pincode-part::placeholder{
+            color: #d5d5d5;
+        }
+        #auto-send{
+            position: absolute;
+            z-index: -1;
+            opacity: 0;
+        }
+        #auto-send+label{
+            display: inline-flex;
+            align-items: center;
+            user-select: none;
+            font-size: 16px;
+            margin-top: 50px;
+        }
+        #auto-send+label::before {
+            content: '';
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            flex-shrink: 0;
+            flex-grow: 0;
+            border: 1px solid #000;
+            border-radius: 0;
+            margin-right: 0.5em;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 50% 50%;
+            transition: all 0.3s ease-in-out;
+        }
+        #auto-send:checked+label::before {
+            border-color: #78BF45;
+            background-color: #78BF45;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+        }
+        /* стили при наведении курсора на checkbox */
+        #auto-send:not(:disabled):not(:checked)+label:hover::before {
+            border-color: #b3d7ff;
+        }
+        /* стили для активного состояния чекбокса (при нажатии на него) */
+        #auto-send:not(:disabled):active+label::before {
+            background-color: #b3d7ff;
+            border-color: #b3d7ff;
+        }
+        /* стили для чекбокса, находящегося в фокусе */
+        #auto-send:focus+label::before {
+
+        }
+        /* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
+        #auto-send:focus:not(:checked)+label::before {
+            border-color: #80bdff;
+        }
+        /* стили для чекбокса, находящегося в состоянии disabled */
+        #auto-send:disabled+label::before {
+            background-color: #e9ecef;
+        }
+        #response{
+            font-size: 18px;
+            padding: 15px;
+            border-radius: 15px 0 0 15px;
+            width: 50%;
+            margin: 0;
+            text-align: left;
+        }
+        #hidden_button{
+            display: none;
+            border: 0;
+            padding: 0 15px 0 15px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #fff;
+            background-color: #78BF45;
+            border-radius: 0 15px 15px 0;
+            text-align: right;
+        }
+        figcaption{
+            font-size: 18px;
+        }
+        #block-response{
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+        }
+        #pincode{
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <figure>
+            <img src="static/img/rust.png" alt="Логотип игры Rust">
+            <figcaption>Помощник по проверке слива</figcaption>
+        </figure>
+        <form>
+            <input type="button" value="Поддержать проект" id="donate">
+        </form>
+        <nav class="flex flex-col">
+            <a href="#news"> Новость о сливе</a>
+            <a href="#check">Проверка на слив</a>
+            <a href="#about">О проекте</a>
+        </nav>
+    </header>
+    <main>
+        <a id="news"></a>
+        <article>
+            <h1>Пароли утекли в сеть</h1>
+            <p>
+                Исследователи нашли в сети самые распространённые пароли и частотность их использования<br/>
+                <a href="#" rel="nofollow" target="_blank">Читать далее...</a>
+            </p>
+        </article>
+        <a id="check"></a>
+        <section>
+            <h1>Проверить пароль, код Rust на утёчку или слив</h1>
+            <div id="block-response">
+                <p id="response"></p>
+                <button id="hidden_button">Скрыть пароль</button>
+            </div>
+
+
+            <form id="pincode">
+                <div>
+                    <input type="text" pattern="[1-9]{4}" class="pincode-part" placeholder="1">
+                    <input type="text" pattern="[1-9]{4}" class="pincode-part" placeholder="1">
+                    <input type="text" pattern="[1-9]{4}" class="pincode-part" placeholder="1">
+                    <input type="text" pattern="[1-9]{4}" class="pincode-part" placeholder="1">
+                    <input type="hidden" pattern="[1-9]{4}" id="pincode-value" name="pincode">
+                </div>
+                <div>
+                    <input type="checkbox" id="auto-send">
+                    <label for="auto-send">Отключить автоматическую отправку по окончанию ввода</label>
+                </div>
+
+                <input id="btn" type="button" value="Проверить">
+
+            </form>
+            <script src="static/js/pincode.js"></script>
+
+        </section>
+        <a id="about"></a>
+        <section>
+            <h1>О нас: кто мы такие?</h1>
+            <p>
+                Мы клан "Bruders" из нашей общелюбимой игры.
+                Мы нашли в этой базе свои пароли, поэтому решили поделиться со всеми игроками этой информацией.
+                Дело в том, что у каждого пароля есть частотность использования, из-за чего читеры смогут увидеть самые используемые пароли и взломать вашу хату.
+            </p>
+        </section>
+    </main>
+    <footer>
+
+    </footer>
+</body>
+<script src="static/js/ajax.js"></script>
+</html>
