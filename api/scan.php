@@ -29,7 +29,7 @@ try{
     $db->connect('localhost', 'mysql', 'mysql', 'rust', '3306');
     $db->set_charset('utf8_general_ci');
     $result = $db->query("SELECT * FROM `codes` WHERE `code` LIKE '$search'");
-    $db->close();
+
 
     // Если найдено значение в БД
     if ($result->num_rows > 0) {
@@ -38,6 +38,25 @@ try{
             echo json_encode(array('data' => $row, 'status' => 200));
         }
     }
+    else {
+        $res_collected = $db->query("SELECT * FROM `collected_codes` WHERE `code` LIKE '$search'");
+        // Если уже был такой код, то прибавим единицу, иначе создадим запись
+        if ($res_collected->num_rows > 0) {
+            $count = intval($res_collected->fetch_assoc()['count']);
+            $count++;
+            $db->query("UPDATE `collected_codes` SET `count` = '$count' WHERE `code` LIKE '$search'");
+            http_response_code(200);
+            echo json_encode(array('data' => 'success', 'status' => 200));
+            exit(200);
+        }
+        else {
+            $db->query("INSERT INTO `collected_codes` (`code`) VALUES ('$search')");
+            http_response_code(200);
+            echo json_encode(array('data' => 'success', 'status' => 200));
+            exit(200);
+        }
+    } // В ином случае проверяем, есть ли значение и прибавляем единицу, либо заносим в базу
+    $db->close();
 }
 
 // Если была ошибка при подключении БД
